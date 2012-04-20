@@ -1,0 +1,23 @@
+<html>
+	<head>
+		<title>News</title>
+		<link type="text/css" rel="stylesheet" href="css/screen.css" />
+		<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.2.min.js" ></script>
+		<script type="text/javascript" src="./js/jquery.rssfeed.min.js"></script>
+		<script type="text/javascript">
+		$(document).ready(function () {
+			$('#Content').rssfeed('http://news.temple.edu/rss/news/topics/campus-news', {
+				limit: 10, 
+				linktarget: '_blank',
+				header: true,
+				content: false,				
+				date: false
+			});
+		});
+		</script>
+
+	</head>
+	<body>
+		<div id="Content"></div>
+	</body>
+</html>

@@ -1,12 +1,6 @@
 <html>
     <head>
-        <script>
-          chrome.browserAction.onClicked.addListener(function (t) {
-			alert(t.url);
-			//chrome.tabs.create({"url" : "https://directory.temple.edu/?FN=%20&LN=" + encodeURI(t.url) });
-			chrome.tabs.create({selected: true, "url" : "https://directory.temple.edu/?FN=%20&LN=" + encodeURIComponent(query) });
-          });
-		  
+        <script>  
 			// Set up the context menus
 			chrome.contextMenus.create({
 			"title": "Last Name Lookup",
