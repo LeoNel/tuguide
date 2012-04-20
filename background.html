@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <script>
+          chrome.browserAction.onClicked.addListener(function (t) {
+			alert(t.url);
+			//chrome.tabs.create({"url" : "https://directory.temple.edu/?FN=%20&LN=" + encodeURI(t.url) });
+			chrome.tabs.create({selected: true, "url" : "https://directory.temple.edu/?FN=%20&LN=" + encodeURIComponent(query) });
+          });
+		  
+			// Set up the context menus
+			chrome.contextMenus.create({
+			"title": "Last Name Lookup",
+			"contexts": ["page", "selection", "image", "link"],
+			"onclick" : function(e) {
+			  var url = e.pageUrl;
+			  var PostUrl = "https://directory.temple.edu/?FN=&LN=";
+			  
+			  if (e.selectionText) {
+				// The user selected some text, put this in the message.
+				PostUrl += encodeURI(e.selectionText);
+			  }
+			  	  
+			  // Open the page up.
+			   chrome.tabs.create(
+				  {"url" : PostUrl });
+			}
+			
+		  });
+		  
+			// Set up the context menus
+			chrome.contextMenus.create({
+			"title": "First Name Lookup",
+			"contexts": ["page", "selection", "image", "link"],
+			"onclick" : function(e) {
+			  var url = e.pageUrl;
+			  var PostUrl = "https://directory.temple.edu/?FN=";
+			  
+			  if (e.selectionText) {
+				// The user selected some text, put this in the message.
+				PostUrl += encodeURI(e.selectionText) + "&LN=";
+			  }
+			  	  
+			  // Open the page up.
+			   chrome.tabs.create(
+				  {"url" : PostUrl });
+			}
+			
+		  });
+
+		  // Set up the context menus		  
+		  chrome.contextMenus.create({"title": "Options", "contexts":["selection"], "onclick": function(){chrome.tabs.create({"url":"options.html"});}});
+        </script>
+    </head>
+</html>
