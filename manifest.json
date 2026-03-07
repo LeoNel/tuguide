@@ -17,12 +17,10 @@
     "service_worker": "background.js"
   },
   "permissions": [
-    "contextMenus",
-    "tabs"
+    "contextMenus"
   ],
   "host_permissions": [
-    "https://directory.temple.edu/*",
-    "https://news.temple.edu/*"
+    "https://news.temple.edu/rss/news/topics/campus-news"
   ],
   "options_ui": {
     "page": "options.html",

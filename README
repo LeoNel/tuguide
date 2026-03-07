@@ -4,4 +4,8 @@ Tags: Chrome, Temple University
 
 == Description ==
 
-TU Guide - Google Chrome Extension to simplify tasks with the Temple University website
+TU Guide - Google Chrome Extension to simplify tasks with the Temple University website.
+
+## Security and permissions
+
+See `docs/permissions.md` for the Ticket 2.3 permissions minimization review and Chrome Web Store permission-justification draft.
