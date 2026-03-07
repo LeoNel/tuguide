@@ -1,65 +1,49 @@
-const MENU_IDS = {
-  lastNameLookup: 'last-name-lookup',
-  firstNameLookup: 'first-name-lookup',
-  options: 'open-options'
-};
-
-function createContextMenus() {
-  chrome.contextMenus.removeAll(() => {
-    chrome.contextMenus.create({
-      id: MENU_IDS.lastNameLookup,
-      title: 'Last Name Lookup',
-      contexts: ['page', 'selection', 'image', 'link']
-    });
-
-    chrome.contextMenus.create({
-      id: MENU_IDS.firstNameLookup,
-      title: 'First Name Lookup',
-      contexts: ['page', 'selection', 'image', 'link']
-    });
-
-    chrome.contextMenus.create({
-      id: MENU_IDS.options,
-      title: 'Options',
-      contexts: ['selection']
-    });
-  });
+function openDirectoryTab(url) {
+  chrome.tabs.create({ url: url });
 }
 
 chrome.runtime.onInstalled.addListener(() => {
-  createContextMenus();
-});
+  chrome.contextMenus.create({
+    id: "last-name-lookup",
+    title: "Last Name Lookup",
+    contexts: ["page", "selection", "image", "link"]
+  });
 
-chrome.runtime.onStartup.addListener(() => {
-  createContextMenus();
+  chrome.contextMenus.create({
+    id: "first-name-lookup",
+    title: "First Name Lookup",
+    contexts: ["page", "selection", "image", "link"]
+  });
+
+  chrome.contextMenus.create({
+    id: "open-options",
+    title: "Options",
+    contexts: ["selection"]
+  });
 });
 
 chrome.contextMenus.onClicked.addListener((info) => {
-  if (info.menuItemId === MENU_IDS.lastNameLookup) {
-    let postUrl = 'https://directory.temple.edu/?FN=&LN=';
+  if (info.menuItemId === "last-name-lookup") {
+    let postUrl = "https://directory.temple.edu/?FN=&LN=";
 
     if (info.selectionText) {
       postUrl += encodeURI(info.selectionText);
     }
 
-    chrome.tabs.create({ url: postUrl });
-    return;
+    openDirectoryTab(postUrl);
   }
 
-  if (info.menuItemId === MENU_IDS.firstNameLookup) {
-    let postUrl = 'https://directory.temple.edu/?FN=';
+  if (info.menuItemId === "first-name-lookup") {
+    let postUrl = "https://directory.temple.edu/?FN=";
 
     if (info.selectionText) {
-      postUrl += `${encodeURI(info.selectionText)}&LN=`;
+      postUrl += encodeURI(info.selectionText) + "&LN=";
     }
 
-    chrome.tabs.create({ url: postUrl });
-    return;
+    openDirectoryTab(postUrl);
   }
 
-  if (info.menuItemId === MENU_IDS.options) {
-    chrome.tabs.create({ url: 'options.html' });
+  if (info.menuItemId === "open-options") {
+    openDirectoryTab("options.html");
   }
 });
-
-createContextMenus();
