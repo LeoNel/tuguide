@@ -2,18 +2,26 @@
   "name": "TU Guide",
   "version": "1.0",
   "description": "TU Guide provides resources to use Temple University's website more efficiently.",
-   "icons": {
-      "128": "./images/icon128.png",
-      "48": "./images/icon48.png",
-      "16": "./images/icon16.png"	  
-   },  
-  "browser_action": {
+  "icons": {
+    "128": "./images/icon128.png",
+    "48": "./images/icon48.png",
+    "16": "./images/icon16.png"
+  },
+  "permissions": [
+    "contextMenus",
+    "tabs"
+  ],
+  "options_page": "options.html",
+  "manifest_version": 3,
+  "action": {
     "default_icon": "./images/icon16.png",
     "default_title": "Temple University Campus News",
-	"default_popup": "news.html"
+    "default_popup": "news.html"
   },
-  "background_page": "background.html",  
-  "permissions": [ "contextMenus", "tabs", "https://directory.temple.edu/"],
-  "options_page": "options.html"
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": [
+    "https://directory.temple.edu/"
+  ]
 }
-
