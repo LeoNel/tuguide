@@ -1,59 +1,35 @@
-﻿<html>
-<head><title>TU Guide</title>
-<!--Author: Leonard Nelson -->
-<!--Website: https://www.leonelson.com -->
-<link rel="stylesheet" type="text/css" href="css/screen.css" />
-<script type="text/javascript">
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TU Guide Options</title>
+    <link rel="stylesheet" href="css/screen.css" />
+    <script src="js/options.js" defer></script>
+  </head>
+  <body class="options-page">
+    <main class="options" aria-labelledby="options-title">
+      <header class="options__header">
+        <h1 id="options-title">TU Guide</h1>
+      </header>
 
-function showpage(page){
-	for(var i=1; i<=3; i++){
-		if(i==page) document.getElementById("page"+i).style.display = "block";
-		else document.getElementById("page"+i).style.display = "none";
-	}	
-}
+      <nav class="options__tabs" aria-label="Options sections">
+        <button type="button" class="tab-button" data-page="about" aria-current="page">About</button>
+      </nav>
 
-</script>
-<script type="text/javascript">
-$(document).ready(function(){ 
-						   
-	$(function() {
-		$("#options_list_ul").sortable({ opacity: 0.3, cursor: 'move', update: function() {
-			console.log("Reordered");
-		}								  
-		});
-	});
+      <section id="page-about" class="options__panel" aria-labelledby="options-title">
+        <h2>Change Log</h2>
+        <p>Version: 1.00</p>
 
-});	
-</script>
-</head>
-<body onLoad="initialise()">
-<div id="container">
-	<div id="header">
-		<div class="left">
-			<h1 class="style1">TU Guide</h1>
-		</div>
-		<div class="right">
-			<button class="top_options" onClick="showpage(1)">About</button>
-		</div>	  
-	   <div class="clear"></div>
-	</div>
-	<hr />
-	<div id="body">
-		<div id="page1">
-			<div class="contain">
-				<h4>Change Log</h4>
-				<p>Version: 1.00</p>
-				<div align="left">
-					<h4>Updates</h4>
-					<p>1.0:  Hello TU Guide - Initial version that includes first name/ last name lookup</p>
-					<h4>Feedback</h4>
-					<p>For suggestions and bug-reports, feel free to <a href="https://www.leonelson.com/contact/" target="_blank">contact me</a>.</p>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div id="footer">
-	</div>
-</div>
-</body>
+        <h3>Updates</h3>
+        <p>1.0: Hello TU Guide - Initial version that includes first name/last name lookup.</p>
+
+        <h3>Feedback</h3>
+        <p>
+          For suggestions and bug reports, feel free to
+          <a href="https://www.leonelson.com/contact/" target="_blank" rel="noopener noreferrer">contact me</a>.
+        </p>
+      </section>
+    </main>
+  </body>
 </html>
