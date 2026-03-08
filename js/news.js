@@ -1,11 +1,6 @@
 const FEED_URL = 'https://news.temple.edu/rss/news/topics/campus-news';
 const MAX_ITEMS = 10;
-
-function escapeHtml(input) {
-  const div = document.createElement('div');
-  div.textContent = input;
-  return div.innerHTML;
-}
+const REQUEST_TIMEOUT_MS = 10000;
 
 function ensureHttps(url) {
   const parsed = new URL(url);
@@ -26,32 +21,54 @@ function getItemDescription(item) {
   return description.textContent.trim();
 }
 
-function buildFeedMarkup(channel, items) {
+function buildFeedNodes(channel, items) {
+  const fragment = document.createDocumentFragment();
   const channelTitle =
     channel.querySelector('title')?.textContent?.trim() ?? 'Temple News';
 
-  let markup = '<ul class="news-list">';
+  const list = document.createElement('ul');
+  list.className = 'news-list';
 
   for (const item of items) {
-    const title =
-      item.querySelector('title')?.textContent?.trim() ?? 'Untitled';
-    const link = item.querySelector('link')?.textContent?.trim() ?? FEED_URL;
+    const title = item.querySelector('title')?.textContent?.trim() ?? 'Untitled';
+    const rawLink = item.querySelector('link')?.textContent?.trim() ?? FEED_URL;
     const description = getItemDescription(item);
 
-    markup += '<li class="news-item">';
-    markup += `<a class="news-link" href="${escapeHtml(link)}" title="Open story in new tab">${escapeHtml(title)}</a>`;
-
-    if (description) {
-      markup += `<p class="news-description">${escapeHtml(description)}</p>`;
+    let safeLink = FEED_URL;
+    try {
+      safeLink = ensureHttps(rawLink);
+    } catch {
+      safeLink = FEED_URL;
     }
 
-    markup += '</li>';
+    const listItem = document.createElement('li');
+    listItem.className = 'news-item';
+
+    const anchor = document.createElement('a');
+    anchor.className = 'news-link';
+    anchor.href = safeLink;
+    anchor.target = '_blank';
+    anchor.rel = 'noopener noreferrer';
+    anchor.title = 'Open story in new tab';
+    anchor.textContent = title;
+    listItem.append(anchor);
+
+    if (description) {
+      const descriptionNode = document.createElement('p');
+      descriptionNode.className = 'news-description';
+      descriptionNode.textContent = description;
+      listItem.append(descriptionNode);
+    }
+
+    list.append(listItem);
   }
 
-  markup += '</ul>';
-  markup += `<p class="feed-source">Source: ${escapeHtml(channelTitle)}</p>`;
+  const source = document.createElement('p');
+  source.className = 'feed-source';
+  source.textContent = `Source: ${channelTitle}`;
 
-  return markup;
+  fragment.append(list, source);
+  return fragment;
 }
 
 function setStatus(message, tone = 'info') {
@@ -71,6 +88,32 @@ function setRetryVisible(isVisible) {
   }
 }
 
+function setContainerState(container, busy) {
+  container.setAttribute('aria-busy', busy ? 'true' : 'false');
+}
+
+function renderStateMessage(container, message) {
+  const paragraph = document.createElement('p');
+  paragraph.className = 'state-message';
+  paragraph.textContent = message;
+  container.replaceChildren(paragraph);
+}
+
+async function fetchWithTimeout(url, timeoutMs) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    return await fetch(url, {
+      method: 'GET',
+      cache: 'no-store',
+      signal: controller.signal
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 async function renderFeed() {
   const container = document.getElementById('feedRegion');
 
@@ -78,16 +121,14 @@ async function renderFeed() {
     return;
   }
 
-  container.innerHTML = '';
+  container.replaceChildren();
+  setContainerState(container, true);
   setStatus('Loading latest campus news…', 'info');
   setRetryVisible(false);
 
   try {
     const secureFeedUrl = ensureHttps(FEED_URL);
-    const response = await fetch(secureFeedUrl, {
-      method: 'GET',
-      cache: 'no-store'
-    });
+    const response = await fetchWithTimeout(secureFeedUrl, REQUEST_TIMEOUT_MS);
 
     if (!response.ok) {
       throw new Error(`Feed request failed with status ${response.status}.`);
@@ -111,24 +152,22 @@ async function renderFeed() {
 
     if (!entries.length) {
       setStatus('No campus news is currently available.', 'empty');
-      container.innerHTML =
-        '<p class="state-message">Check back again later for updates.</p>';
+      renderStateMessage(container, 'Check back again later for updates.');
       return;
     }
 
     setStatus(`Showing ${entries.length} recent stories.`, 'success');
-    container.innerHTML = buildFeedMarkup(channel, entries);
-
-    for (const link of container.querySelectorAll('a')) {
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-    }
+    container.replaceChildren(buildFeedNodes(channel, entries));
   } catch (error) {
-    const message = error?.message || 'Unable to load feed.';
+    const message = error?.name === 'AbortError'
+      ? 'Feed request timed out.'
+      : error?.message || 'Unable to load feed.';
+
     setStatus(`Could not load campus news: ${message}`, 'error');
     setRetryVisible(true);
-    container.innerHTML =
-      '<p class="state-message">Please check your connection and try again.</p>';
+    renderStateMessage(container, 'Please check your connection and try again.');
+  } finally {
+    setContainerState(container, false);
   }
 }
 

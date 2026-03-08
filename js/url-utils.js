@@ -15,6 +15,10 @@
 
   function buildLookupUrl(type, selectionText) {
     const cleanedSelection = sanitizeSelection(selectionText);
+    if (!cleanedSelection) {
+      return '';
+    }
+
     const encodedSelection = encodeURIComponent(cleanedSelection);
 
     if (type === 'last-name-lookup') {

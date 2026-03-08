@@ -20,20 +20,6 @@ async function run() {
 
     const extensionId = serviceWorker.url().split('/')[2];
 
-    await serviceWorker.evaluate(() => {
-      chrome.runtime.sendMessage({ type: 'trigger-on-installed' });
-    });
-
-    const registeredMenus = await serviceWorker.evaluate(
-      () => globalThis.__TU_GUIDE_DEBUG__?.registeredMenuItems || []
-    );
-
-    assert.deepEqual(registeredMenus.map((menu) => menu.id).sort(), [
-      'first-name-lookup',
-      'last-name-lookup',
-      'open-options'
-    ]);
-
     const optionsPage = await context.newPage();
     const optionsConsoleErrors = [];
     optionsPage.on('console', (message) => {

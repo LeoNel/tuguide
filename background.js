@@ -11,41 +11,46 @@ if (typeof importScripts === 'function') {
 }
 
 const { MAX_SELECTION_LENGTH, sanitizeSelection, buildLookupUrl } = urlUtils;
-const { registerMenus, createClickHandler } = contextMenus;
+const { createClickHandler } = contextMenus;
 
 function openDirectoryTab(url) {
+  if (!url) {
+    return;
+  }
+
   chrome.tabs.create({ url });
 }
 
-if (typeof chrome !== 'undefined' && chrome.runtime && chrome.contextMenus) {
-  globalThis.__TU_GUIDE_DEBUG__ = {
-    registeredMenuItems: []
-  };
+function openOptionsPage() {
+  chrome.runtime.openOptionsPage();
+}
 
-  chrome.runtime.onInstalled.addListener(() => {
-    registerMenus((menu) => {
-      globalThis.__TU_GUIDE_DEBUG__.registeredMenuItems.push(menu);
-      chrome.contextMenus.create(menu);
-    });
-  });
-
-  chrome.contextMenus.onClicked.addListener(
-    createClickHandler(openDirectoryTab, buildLookupUrl)
-  );
-
-  chrome.runtime.onMessage.addListener((message) => {
-    if (message && message.type === 'trigger-on-installed') {
-      registerMenus((menu) => {
-        globalThis.__TU_GUIDE_DEBUG__.registeredMenuItems.push(menu);
+function registerContextMenus() {
+  chrome.contextMenus.removeAll(() => {
+    for (const menu of contextMenus.MENU_DEFINITIONS) {
+      chrome.contextMenus.create(menu, () => {
+        if (chrome.runtime.lastError) {
+          console.warn(chrome.runtime.lastError.message);
+        }
       });
     }
   });
+}
+
+if (typeof chrome !== 'undefined' && chrome.runtime && chrome.contextMenus) {
+  chrome.runtime.onInstalled.addListener(registerContextMenus);
+  chrome.runtime.onStartup.addListener(registerContextMenus);
+
+  chrome.contextMenus.onClicked.addListener(
+    createClickHandler(openDirectoryTab, buildLookupUrl, openOptionsPage)
+  );
 }
 
 if (typeof module !== 'undefined') {
   module.exports = {
     MAX_SELECTION_LENGTH,
     sanitizeSelection,
-    buildLookupUrl
+    buildLookupUrl,
+    registerContextMenus
   };
 }

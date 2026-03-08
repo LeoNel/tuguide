@@ -50,6 +50,21 @@ function walk(dir) {
         `${relPath}: contains prohibited inline event handler attribute`
       );
     }
+
+    if (/\beval\s*\(/i.test(content)) {
+      findings.push(`${relPath}: contains prohibited eval()`);
+    }
+
+    if (/\bnew\s+Function\s*\(/i.test(content)) {
+      findings.push(`${relPath}: contains prohibited new Function()`);
+    }
+
+    if (
+      ext === '.html' &&
+      /<script[^>]+src\s*=\s*["']https?:\/\//i.test(content)
+    ) {
+      findings.push(`${relPath}: contains prohibited remote script source`);
+    }
   }
 }
 

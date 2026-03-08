@@ -18,7 +18,9 @@ for (const field of [
   'description',
   'background',
   'action',
-  'permissions'
+  'permissions',
+  'minimum_chrome_version',
+  'content_security_policy'
 ]) {
   requireField(field);
 }
@@ -29,6 +31,10 @@ if (manifest.manifest_version !== 3) {
 
 if (!/^\d+\.\d+(\.\d+)?$/.test(manifest.version || '')) {
   failures.push('version must be semantic-looking format like 1.0 or 1.0.0');
+}
+
+if (!/^\d+$/.test(manifest.minimum_chrome_version || '')) {
+  failures.push('minimum_chrome_version must be a major version string like "116"');
 }
 
 if (
@@ -53,6 +59,22 @@ if (
   )
 ) {
   failures.push('host_permissions entries must be https:// URLs');
+}
+
+const extensionCsp =
+  manifest.content_security_policy &&
+  manifest.content_security_policy.extension_pages;
+
+if (typeof extensionCsp !== 'string') {
+  failures.push('content_security_policy.extension_pages must be a string');
+} else {
+  if (!/script-src\s+'self'/.test(extensionCsp)) {
+    failures.push("CSP must contain script-src 'self'");
+  }
+
+  if (/connect-src\s+https:\s*;/.test(extensionCsp)) {
+    failures.push('CSP connect-src must not allow all https origins');
+  }
 }
 
 if (failures.length > 0) {
