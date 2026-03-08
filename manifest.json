@@ -16,12 +16,8 @@
   "background": {
     "service_worker": "background.js"
   },
-  "permissions": [
-    "contextMenus"
-  ],
-  "host_permissions": [
-    "https://news.temple.edu/rss/news/topics/campus-news"
-  ],
+  "permissions": ["contextMenus"],
+  "host_permissions": ["https://news.temple.edu/rss/news/topics/campus-news"],
   "options_ui": {
     "page": "options.html",
     "open_in_tab": true

@@ -102,16 +102,16 @@ Rollback if any of the following occur post-release:
 
 The following dry-run execution was completed to validate this process:
 
-| Date (UTC) | Environment | Scenario | Result | Notes |
-| --- | --- | --- | --- | --- |
-| 2026-03-08 | Staging maintainer workflow | Build artifact + validation test + simulated metadata promotion | Pass | Artifact packaged and background unit tests passed prior to metadata promotion simulation. |
+| Date (UTC) | Environment                 | Scenario                                                        | Result | Notes                                                                                      |
+| ---------- | --------------------------- | --------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------ |
+| 2026-03-08 | Staging maintainer workflow | Build artifact + validation test + simulated metadata promotion | Pass   | Artifact packaged and background unit tests passed prior to metadata promotion simulation. |
 
 ## 7) Rollback drill evidence
 
-| Date (UTC) | Channel | Drill action | Result | Notes |
-| --- | --- | --- | --- | --- |
-| 2026-03-08 | Self-hosted | Re-point metadata from `v1.0.1` candidate back to `v1.0.0` baseline in staging | Pass | Client profile detected rollback target and restored baseline build. |
-| 2026-03-08 | CWS | Operational tabletop drill for rapid hotfix path | Pass | Documented escalation path and patch-version bump requirement. |
+| Date (UTC) | Channel     | Drill action                                                                   | Result | Notes                                                                |
+| ---------- | ----------- | ------------------------------------------------------------------------------ | ------ | -------------------------------------------------------------------- |
+| 2026-03-08 | Self-hosted | Re-point metadata from `v1.0.1` candidate back to `v1.0.0` baseline in staging | Pass   | Client profile detected rollback target and restored baseline build. |
+| 2026-03-08 | CWS         | Operational tabletop drill for rapid hotfix path                               | Pass   | Documented escalation path and patch-version bump requirement.       |
 
 ## 8) Release operator checklist (quick reference)
 
@@ -124,4 +124,3 @@ The following dry-run execution was completed to validate this process:
 7. Promote production metadata.
 8. Validate production update uptake.
 9. Record release + rollback readiness in release notes.
-

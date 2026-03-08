@@ -13,12 +13,15 @@ This guide is the primary handoff and operations document for maintainers.
 ### Runtime components
 
 - `manifest.json`: Declares extension metadata, permissions, popup, options page, and service worker.
-- `background.js`: Service worker that registers context menu entries and opens directory/options links.
+- `background.js`: Service worker that wires context menu registration/click handling and opens directory/options links.
 - `news.html` + `js/news.js`: Popup UI that fetches and renders the Temple campus news RSS feed.
 - `options.html` + `js/options.js`: Options page UI with tabbed sections.
 - `css/screen.css`: Shared styling for extension pages.
 - `images/*`: Store and extension icon/promotional assets.
-- `tests/background.test.js`: Node-based unit tests for lookup URL and input-sanitization logic.
+- `js/url-utils.js`: Shared URL construction and selection sanitization utilities.
+- `js/context-menus.js`: Context menu definitions, registration helper, and click-handler factory.
+- `tests/url-utils.test.js` + `tests/context-menus.test.js` + `tests/background.test.js`: Node-based unit tests for URL and menu logic.
+- `tests/e2e/smoke.js`: Playwright Chromium smoke test for extension load, menus, popup, and options.
 
 ### Data flow (high level)
 
@@ -49,10 +52,20 @@ git clone <repo-url>
 cd tuguide
 ```
 
-### Run tests
+### Run tests and checks
 
 ```bash
-node tests/background.test.js
+# Unit tests
+npm run test:unit
+
+# Manifest and policy checks
+npm run validate:manifest
+npm run scan:policy
+
+# Full local checks (requires dev dependencies)
+npm run lint
+npm run format:check
+npm run test:e2e
 ```
 
 ### Load extension in Chrome (developer mode)

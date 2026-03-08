@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -11,12 +11,23 @@
     <main id="popup-main" class="popup" aria-labelledby="popup-title">
       <header class="popup__header">
         <h1 id="popup-title">Temple Campus News</h1>
-        <button id="retryButton" class="button button--secondary" type="button" hidden>
+        <button
+          id="retryButton"
+          class="button button--secondary"
+          type="button"
+          hidden
+        >
           Retry
         </button>
       </header>
-      <p id="feedStatus" class="status" role="status" aria-live="polite">Loading latest campus news…</p>
-      <section id="feedRegion" aria-label="Campus news feed" aria-live="polite"></section>
+      <p id="feedStatus" class="status" role="status" aria-live="polite">
+        Loading latest campus news…
+      </p>
+      <section
+        id="feedRegion"
+        aria-label="Campus news feed"
+        aria-live="polite"
+      ></section>
     </main>
   </body>
 </html>
