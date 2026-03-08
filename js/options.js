@@ -14,6 +14,16 @@ function showPage(pageId) {
   }
 }
 
+function renderVersion(manifestProvider = () => chrome.runtime.getManifest()) {
+  const versionNode = document.getElementById('extensionVersion');
+  if (!versionNode) {
+    return;
+  }
+
+  const manifest = manifestProvider();
+  versionNode.textContent = manifest?.version || 'Unknown';
+}
+
 function initialiseOptionsPage() {
   const tabButtons = [...document.querySelectorAll('.tab-button')];
 
@@ -50,6 +60,14 @@ function initialiseOptionsPage() {
   }
 
   showPage('page-about');
+  renderVersion();
 }
 
 document.addEventListener('DOMContentLoaded', initialiseOptionsPage);
+
+if (typeof module !== 'undefined') {
+  module.exports = {
+    showPage,
+    renderVersion
+  };
+}

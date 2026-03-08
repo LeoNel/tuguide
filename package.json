@@ -8,7 +8,7 @@
     "format:check": "prettier --check \"**/*.{js,json,md,html,css,yml,yaml}\"",
     "validate:manifest": "node scripts/validate-manifest.js",
     "scan:policy": "node scripts/policy-scan.js",
-    "test:unit": "node tests/url-utils.test.js && node tests/context-menus.test.js && node tests/background.test.js",
+    "test:unit": "node tests/url-utils.test.js && node tests/context-menus.test.js && node tests/background.test.js && node tests/news.test.js && node tests/manifest-validation.test.js && node tests/policy-scan.test.js",
     "test:e2e": "node tests/e2e/smoke.js",
     "test": "npm run test:unit"
   },
