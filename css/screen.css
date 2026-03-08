@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
 :root {
-  color-scheme: light;
+  color-scheme: light dark;
   --text: #1b1b1b;
   --muted: #4c4c4c;
   --surface: #ffffff;
@@ -11,6 +11,28 @@
   --accent-dark: #7c1b2a;
   --success: #1f7a3d;
   --error: #a12622;
+  --link: #102c57;
+  --focus: #005fcc;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #f1f5ff;
+    --muted: #c8d2e6;
+    --surface: #121721;
+    --surface-alt: #1b2230;
+    --border: #36445f;
+    --accent: #b73349;
+    --accent-dark: #9d2235;
+    --success: #5dd58b;
+    --error: #ff8b8b;
+    --link: #9ecbff;
+    --focus: #7bb3ff;
+  }
+
+  body {
+    background-color: #0f131b;
+  }
 }
 
 * {
@@ -88,7 +110,7 @@ h1 {
 
 .news-link {
   display: inline-block;
-  color: #102c57;
+  color: var(--link);
   font-size: 1rem;
   font-weight: 700;
   text-decoration-thickness: 2px;
@@ -148,10 +170,10 @@ h1 {
 }
 
 a {
-  color: #102c57;
+  color: var(--link);
 }
 
 :focus-visible {
-  outline: 3px solid #005fcc;
+  outline: 3px solid var(--focus);
   outline-offset: 2px;
 }

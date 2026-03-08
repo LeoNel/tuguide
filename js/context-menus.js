@@ -23,20 +23,24 @@
     }
   }
 
-  function createClickHandler(openDirectoryTab, buildLookupUrl) {
+  function createClickHandler(openDirectoryTab, buildLookupUrl, openOptionsPage) {
     return function onMenuClick(info) {
       if (info.menuItemId === 'last-name-lookup') {
         const url = buildLookupUrl('last-name-lookup', info.selectionText);
-        openDirectoryTab(url);
+        if (url) {
+          openDirectoryTab(url);
+        }
       }
 
       if (info.menuItemId === 'first-name-lookup') {
         const url = buildLookupUrl('first-name-lookup', info.selectionText);
-        openDirectoryTab(url);
+        if (url) {
+          openDirectoryTab(url);
+        }
       }
 
       if (info.menuItemId === 'open-options') {
-        openDirectoryTab('options.html');
+        openOptionsPage();
       }
     };
   }

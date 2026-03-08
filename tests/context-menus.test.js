@@ -28,28 +28,34 @@ assert.deepEqual(created, MENU_DEFINITIONS);
 
 const openedUrls = [];
 const built = [];
+let openOptionsCalls = 0;
 const handler = createClickHandler(
   (url) => openedUrls.push(url),
   (type, selection) => {
     built.push({ type, selection });
-    return `https://example.test/${type}?q=${encodeURIComponent(selection || '')}`;
+    return selection ? `https://example.test/${type}?q=${encodeURIComponent(selection)}` : '';
+  },
+  () => {
+    openOptionsCalls += 1;
   }
 );
 
 handler({ menuItemId: 'last-name-lookup', selectionText: 'Ada Lovelace' });
 handler({ menuItemId: 'first-name-lookup', selectionText: 'Grace Hopper' });
+handler({ menuItemId: 'first-name-lookup', selectionText: '' });
 handler({ menuItemId: 'open-options' });
 handler({ menuItemId: 'unknown-id', selectionText: 'Ignored' });
 
 assert.deepEqual(built, [
   { type: 'last-name-lookup', selection: 'Ada Lovelace' },
-  { type: 'first-name-lookup', selection: 'Grace Hopper' }
+  { type: 'first-name-lookup', selection: 'Grace Hopper' },
+  { type: 'first-name-lookup', selection: '' }
 ]);
 
 assert.deepEqual(openedUrls, [
   'https://example.test/last-name-lookup?q=Ada%20Lovelace',
-  'https://example.test/first-name-lookup?q=Grace%20Hopper',
-  'options.html'
+  'https://example.test/first-name-lookup?q=Grace%20Hopper'
 ]);
+assert.equal(openOptionsCalls, 1);
 
 console.log('context menu tests passed');

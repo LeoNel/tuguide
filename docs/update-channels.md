@@ -1,126 +1,54 @@
-# Update-channel strategy runbook (CWS + self-hosted)
-
-This runbook defines release and rollback operations for TU Guide's dual distribution model.
+# Update-channel strategy runbook (CWS primary, optional self-hosted)
 
 ## 1) Channel model
 
-- **Channel A: Chrome Web Store (CWS)**
-  - Managed by Google review and staged/automatic client updates.
-- **Channel B: Self-hosted updates**
-  - Maintainer-controlled artifact hosting and update metadata publication.
+- **Primary production channel: Chrome Web Store (CWS)**
+  - CWS = **Chrome Web Store**.
+  - Google handles review and rollout for store-installed users.
+- **Optional secondary channel: self-hosted updates**
+  - Only used if an organization deploys the extension outside CWS-managed installs.
 
-## 2) Versioning and release branching rules
+## 2) Invariants
 
-- Canonical version source: `manifest.json`.
-- Release tag format: `vMAJOR.MINOR.PATCH`.
-- Branches:
-  - `main`: integration and default release source.
-  - `release/<major>.<minor>`: optional stabilization branch.
-  - `hotfix/<ticket-or-issue>`: urgent fix path.
-- Version progression:
-  - Never reuse a published version.
-  - CWS and self-hosted artifacts for the same release must share identical code and version.
+- `manifest.json` version is authoritative.
+- CWS and any optional self-hosted artifacts for the same release must share identical code and version.
+- Every release must pass: unit tests, manifest validation, policy scan, and smoke checks.
 
-## 3) Packaging/signing flow per channel
+## 3) Release flow
 
-## 3.1 Build artifact
+### 3.1 Build
 
-```bash
-rm -rf dist
-mkdir -p dist
-zip -r dist/tuguide-v<version>-unsigned.zip manifest.json background.js news.html options.html js css images LICENSE README docs
-```
+1. Clean and create `dist/`.
+2. Build zip artifact: `dist/tuguide-v<version>-unsigned.zip`.
+3. Verify artifact contains only extension/runtime docs and assets.
 
-Run validation before publish:
+### 3.2 CWS flow (required)
 
-```bash
-node tests/background.test.js
-```
+1. Upload the release zip to CWS dashboard.
+2. Submit/update listing metadata and permission rationale.
+3. Track review status and release approval.
+4. Validate install/update in a clean Chrome profile.
 
-## 3.2 CWS flow
+### 3.3 Self-hosted flow (optional)
 
-1. Upload `dist/tuguide-v<version>-unsigned.zip` to CWS dashboard.
-2. Confirm permissions and privacy disclosures align with `docs/permissions.md`.
-3. Submit for review.
-4. Track approval timestamp and rollout completion in release notes.
+1. Publish the same release artifact to controlled storage.
+2. Update deployment metadata (`updates.xml` or org-specific metadata equivalent).
+3. Validate install/update in staging before production promotion.
+4. Keep at least two previous versions available for rollback.
 
-## 3.3 Self-hosted flow
+## 4) Rollback
 
-1. Publish `dist/tuguide-v<version>-unsigned.zip` to release storage.
-2. Generate/update update manifest metadata (`updates.xml` or equivalent channel metadata document used by your deployment).
-3. Point metadata download URL to the new artifact.
-4. Verify update install in staging profile before production metadata promotion.
-5. Promote metadata to production endpoint.
+- **CWS rollback:** disable affected release or expedite hotfix with incremented patch version.
+- **Self-hosted rollback (if enabled):** re-point update metadata to last known-good release and verify staging before production.
 
-## 4) Self-hosted update metadata management
-
-Maintain a channel metadata file with at least:
-
-- Extension/app ID (as required by your deployment path).
-- Version string (must match `manifest.json`).
-- Download URL.
-- Optional release notes URL.
-- Hash/checksum when supported by your updater.
-
-Operational rules:
-
-- Keep metadata in source control for change tracking.
-- Apply metadata changes via pull request.
-- Use atomic publish (upload new metadata then swap pointer/symlink/object version).
-- Retain at least two previous artifact versions for rollback.
-
-## 5) Rollback process
-
-## 5.1 Trigger conditions
-
-Rollback if any of the following occur post-release:
-
-- Critical user-impacting regression.
-- Security or privacy issue.
-- Broken install/update in either channel.
-
-## 5.2 CWS rollback
-
-1. Unpublish/disable the affected CWS release or promote prior good version when available in dashboard controls.
-2. If needed, submit a hotfix with incremented patch version.
-3. Document incident window and user impact.
-
-## 5.3 Self-hosted rollback
-
-1. Re-point update metadata to last known-good artifact.
-2. Verify clean update on staging profile.
-3. Promote rollback metadata to production.
-4. Announce rollback completion and next remediation ETA.
-
-## 5.4 Post-rollback
-
-- Open incident record.
-- Create corrective ticket(s).
-- Add regression test/checklist item.
-
-## 6) Staging runbook execution evidence
-
-The following dry-run execution was completed to validate this process:
-
-| Date (UTC) | Environment                 | Scenario                                                        | Result | Notes                                                                                      |
-| ---------- | --------------------------- | --------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------ |
-| 2026-03-08 | Staging maintainer workflow | Build artifact + validation test + simulated metadata promotion | Pass   | Artifact packaged and background unit tests passed prior to metadata promotion simulation. |
-
-## 7) Rollback drill evidence
-
-| Date (UTC) | Channel     | Drill action                                                                   | Result | Notes                                                                |
-| ---------- | ----------- | ------------------------------------------------------------------------------ | ------ | -------------------------------------------------------------------- |
-| 2026-03-08 | Self-hosted | Re-point metadata from `v1.0.1` candidate back to `v1.0.0` baseline in staging | Pass   | Client profile detected rollback target and restored baseline build. |
-| 2026-03-08 | CWS         | Operational tabletop drill for rapid hotfix path                               | Pass   | Documented escalation path and patch-version bump requirement.       |
-
-## 8) Release operator checklist (quick reference)
+## 5) Operator checklist
 
 1. Confirm version bump in `manifest.json`.
-2. Run `node tests/background.test.js`.
-3. Build zip artifact.
-4. Publish CWS candidate.
-5. Publish self-hosted artifact and staging metadata.
-6. Smoke-test install/update.
-7. Promote production metadata.
+2. Run `npm run test:unit`.
+3. Run `npm run validate:manifest`.
+4. Run `npm run scan:policy`.
+5. Build release artifact.
+6. Publish CWS candidate.
+7. If self-hosted is active, publish metadata and validate staging.
 8. Validate production update uptake.
-9. Record release + rollback readiness in release notes.
+9. Record release notes and rollback readiness.

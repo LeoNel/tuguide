@@ -89,7 +89,7 @@ npm run test:e2e
   - At least one article renders (or clear empty/error message).
   - Links open in new tab with `noopener noreferrer` protection.
 
-## 3) Build/package instructions (CWS + self-hosted)
+## 3) Build/package instructions (Chrome Web Store / CWS)
 
 All release packaging is done from the repository root.
 
@@ -110,12 +110,12 @@ zip -r dist/tuguide-v<version>-unsigned.zip manifest.json background.js news.htm
 3. Complete listing and permission-justification fields (see `docs/permissions.md`).
 4. Submit for review and track approval time.
 
-### 3.3 Self-hosted package
+### 3.3 Optional self-hosted package (not used for current production channel)
 
 1. Use the same zip artifact.
 2. Publish artifact to your release bucket/storage.
-3. Update self-hosted update metadata (runbook in `docs/update-channels.md`).
-4. Promote metadata only after smoke verification in staging.
+3. If your organization enables self-hosted deployment, follow `docs/update-channels.md`.
+4. Keep release code identical to the CWS build for parity testing.
 
 ## 4) Permissions rationale and privacy model
 
@@ -170,9 +170,9 @@ For full minimization review and CWS copy, see `docs/permissions.md`.
 1. Update `manifest.json` version.
 2. Run tests and manual verification checklist.
 3. Build release zip in `dist/`.
-4. Publish via both channels per `docs/update-channels.md`.
-5. Record release notes with ticket references.
-6. Validate production update uptake (CWS + self-hosted).
+4. Publish via CWS and record listing notes.
+5. (Optional) Publish a self-hosted channel if your deployment requires it (`docs/update-channels.md`).
+6. Validate production update uptake for each active channel.
 7. Tag release in git (`v<version>`).
 
 ## 7) Browser compatibility matrix
@@ -182,7 +182,7 @@ For full minimization review and CWS copy, see `docs/permissions.md`.
 | Chrome (stable, MV3) | Supported | Primary target; full test coverage expected each release. |
 | Edge (Chromium) | Best effort | Usually compatible with MV3 APIs used (`contextMenus`, action popup, options). |
 | Brave/Opera (Chromium) | Best effort | Validate manual smoke due to distribution/policy differences. |
-| Firefox | Not currently supported | This extension is packaged as MV3 Chromium-first and distributed via CWS/self-hosted Chromium channel. |
+| Firefox | Not currently supported | This extension is packaged as MV3 Chromium-first and distributed primarily via Chrome Web Store (CWS). |
 
 ## 8) Operational docs
 

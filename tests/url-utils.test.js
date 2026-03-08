@@ -37,11 +37,7 @@ assert.equal(
   'https://directory.temple.edu/?FN=&LN=a%2Bb%3Dc%20%26%20d%2Fe'
 );
 
-assert.equal(
-  buildLookupUrl('last-name-lookup', '   '),
-  'https://directory.temple.edu/?FN=&LN='
-);
-
+assert.equal(buildLookupUrl('last-name-lookup', '   '), '');
 assert.equal(buildLookupUrl('unknown', 'Alice'), '');
 
 console.log('url utils tests passed');

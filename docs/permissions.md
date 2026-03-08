@@ -26,7 +26,7 @@
   - **Reason:** Directory URLs are opened directly in a tab and not fetched or inspected by extension scripts.
   - **Risk reduction:** No host access retained where it is not technically required.
 
-## Chrome Web Store listing draft (permission justification)
+## Chrome Web Store (CWS) listing draft (permission justification)
 
 > **Permission justification draft**
 >
