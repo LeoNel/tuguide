@@ -20,7 +20,8 @@ This guide is the primary handoff and operations document for maintainers.
 - `images/*`: Store and extension icon/promotional assets.
 - `js/url-utils.js`: Shared URL construction and selection sanitization utilities.
 - `js/context-menus.js`: Context menu definitions, registration helper, and click-handler factory.
-- `tests/url-utils.test.js` + `tests/context-menus.test.js` + `tests/background.test.js`: Node-based unit tests for URL and menu logic.
+- `tests/url-utils.test.js` + `tests/context-menus.test.js` + `tests/background.test.js` + `tests/news.test.js`: Node-based unit tests for URL, menu, background error handling, and RSS parser logic.
+- `tests/manifest-validation.test.js` + `tests/policy-scan.test.js`: Regression checks for manifest hardening and policy scanner guardrails.
 - `tests/e2e/smoke.js`: Playwright Chromium smoke test for extension load, menus, popup, and options.
 
 ### Data flow (high level)
@@ -30,6 +31,7 @@ This guide is the primary handoff and operations document for maintainers.
 3. Service worker sanitizes the selected text and opens a directory URL in a new tab.
 4. Popup loads (`news.html`) and `js/news.js` fetches RSS XML over HTTPS.
 5. Popup parses RSS, renders up to 10 entries, and sets safe `target`/`rel` attributes for links.
+6. Options page renders its version from `chrome.runtime.getManifest().version` (no hardcoded version text).
 
 ### Trust boundaries
 
@@ -144,10 +146,27 @@ For full minimization review and CWS copy, see `docs/permissions.md`.
 ## 5) Security and compliance
 
 - Principle of least privilege: no `tabs` permission and no wildcard host grants.
-- CSP in `manifest.json` restricts script origin to extension package (`'self'`).
+- CSP in `manifest.json` is hardened: `script-src 'self'`, `object-src 'none'`, `base-uri 'none'`, `form-action 'none'`, and Temple RSS-only `connect-src`.
 - Network calls are HTTPS-only in popup code path.
 - Include permission rationale in CWS listing and maintain in-source docs.
 - Run release checklist and rollback drill every release cycle.
+
+
+### Security gates (required before release)
+
+```bash
+npm run test:unit
+npm run validate:manifest
+npm run scan:policy
+npm run lint
+npm run format:check
+# run when Chromium runtime is available
+npm run test:e2e
+```
+
+Expected pass criteria:
+- `validate:manifest` fails on permission drift, wildcard host permissions, or unsafe CSP directives.
+- `scan:policy` fails on remote scripts, eval/new Function, risky HTML sinks, or dynamic script injection patterns unless explicitly allowlisted with `policy-scan: allow`.
 
 ## 6) Release checklist and versioning policy
 

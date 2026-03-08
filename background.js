@@ -27,10 +27,19 @@ function openOptionsPage() {
 
 function registerContextMenus() {
   chrome.contextMenus.removeAll(() => {
+    if (chrome.runtime.lastError) {
+      console.error(
+        `Failed to clear context menus: ${chrome.runtime.lastError.message}`
+      );
+      return;
+    }
+
     for (const menu of contextMenus.MENU_DEFINITIONS) {
       chrome.contextMenus.create(menu, () => {
         if (chrome.runtime.lastError) {
-          console.warn(chrome.runtime.lastError.message);
+          console.error(
+            `Failed to register context menu (${menu.id}): ${chrome.runtime.lastError.message}`
+          );
         }
       });
     }

@@ -24,6 +24,6 @@
     "open_in_tab": true
   },
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; connect-src https://news.temple.edu;"
+    "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; connect-src https://news.temple.edu/rss/news/topics/campus-news;"
   }
 }

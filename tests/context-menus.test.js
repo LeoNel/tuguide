@@ -33,7 +33,9 @@ const handler = createClickHandler(
   (url) => openedUrls.push(url),
   (type, selection) => {
     built.push({ type, selection });
-    return selection ? `https://example.test/${type}?q=${encodeURIComponent(selection)}` : '';
+    return selection
+      ? `https://example.test/${type}?q=${encodeURIComponent(selection)}`
+      : '';
   },
   () => {
     openOptionsCalls += 1;

@@ -23,7 +23,11 @@
     }
   }
 
-  function createClickHandler(openDirectoryTab, buildLookupUrl, openOptionsPage) {
+  function createClickHandler(
+    openDirectoryTab,
+    buildLookupUrl,
+    openOptionsPage
+  ) {
     return function onMenuClick(info) {
       if (info.menuItemId === 'last-name-lookup') {
         const url = buildLookupUrl('last-name-lookup', info.selectionText);
