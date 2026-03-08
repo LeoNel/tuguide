@@ -62,11 +62,11 @@ h1 {
   font-size: 0.95rem;
 }
 
-.status[data-tone="success"] {
+.status[data-tone='success'] {
   color: var(--success);
 }
 
-.status[data-tone="error"] {
+.status[data-tone='error'] {
   color: var(--error);
   font-weight: 700;
 }
